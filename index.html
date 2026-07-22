@@ -171,9 +171,9 @@
 
 <script>
 // 컬럼 인덱스 (0부터 시작)
-// A=0:id, B=1:프로젝트, C=2:층, D=3:층_한글, E=4:ZONE
-// F=5:RANGE_시작, G=6:RANGE_끝, H=7:규격, I=8:JPG_ID
-// J=9:현장, K=10:계약사, L=11:도면기준일
+// A=0:NO, B=1:id, C=2:프로젝트, D=3:층, E=4:층_한글, F=5:ZONE
+// G=6:RANGE_시작, H=7:RANGE_끝, I=8:규격, J=9:JPG_ID
+// K=10:현장, L=11:계약사, M=12:도면기준일
 
 function getParam(name) {
   return new URL(window.location.href).searchParams.get(name);
@@ -199,18 +199,18 @@ async function loadData() {
     const text = await res.text();
     const rows = parseCSV(text);
     const data = rows.slice(1);
-    const row = data.find(r => r[0] && r[0].trim() === zoneId.trim());
+    const row = data.find(r => r[1] && r[1].trim() === zoneId.trim());
     if (!row) { showError(`ID "${zoneId}" 를 "${tabName}" 탭에서 찾을 수 없습니다.`); return; }
     const d = {
-      floor:   row[2],
-      floorKo: row[3],
-      zone:    row[4],
-      rangeS:  row[5],
-      rangeE:  row[6],
-      imgId:   row[8],
-      site:    row[9],
-      client:  row[10],
-      date:    row[11],
+      floor:   row[3],
+      floorKo: row[4],
+      zone:    row[5],
+      rangeS:  row[6],
+      rangeE:  row[7],
+      imgId:   row[9],
+      site:    row[10],
+      client:  row[11],
+      date:    row[12],
     };
     render(d);
   } catch(e) {
