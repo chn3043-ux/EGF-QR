@@ -277,7 +277,7 @@ function render(d) {
   document.getElementById('val-floor').textContent  = d.floor;
   document.getElementById('val-zone').textContent   = `ZONE ${d.zone}`;
   document.getElementById('val-range').textContent  = `#${d.rangeS} ~ #${d.rangeE}`;
-  document.getElementById('val-hint-zone').textContent = `ZONE ${d.zone} (#${d.rangeS}~#${d.rangeE})`;
+  document.getElementById('val-hint-zone').textContent = `ZONE ${d.zone}`;
   document.getElementById('val-date').textContent   = d.date;
   document.title = `EG-Frame · ZONE ${d.zone} (${d.floor})`;
   document.getElementById('loadingView').style.display = 'none';
