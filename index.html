@@ -176,6 +176,8 @@
 // G=6:RANGE_시작, H=7:RANGE_끝, I=8:규격, J=9:JPG_ID
 // K=10:현장, L=11:계약사, M=12:도면기준일
 
+let TRACK_URL = ''; // config.json의 trackingUrl이 여기에 채워짐 (QR 스캔 카운트용)
+
 function getParam(name) {
   return new URL(window.location.href).searchParams.get(name);
 }
@@ -192,6 +194,7 @@ async function loadData() {
     const configRes = await fetch('./config.json');
     if (!configRes.ok) { showError('설정 파일(config.json)을 불러올 수 없습니다.'); return; }
     const config = await configRes.json();
+    TRACK_URL = config.trackingUrl || ''; // QR 스캔 카운트용 Apps Script URL
 
     const sheetUrl = `https://docs.google.com/spreadsheets/d/${config.sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tabName)}`;
 
@@ -214,6 +217,7 @@ async function loadData() {
       date:    row[12],
     };
     render(d);
+    logScan(d, zoneId, tabName); // 정상적으로 렌더링된 경우에만 스캔 카운트
   } catch(e) {
     showError('데이터를 불러오는 중 오류가 발생했습니다.');
     console.error(e);
@@ -283,6 +287,26 @@ function render(d) {
   document.getElementById('loadingView').style.display = 'none';
   document.getElementById('mainContent').style.display = 'block';
   loadImage(d.imgId);
+}
+
+// QR 스캔 카운트: config.json의 trackingUrl(Apps Script 웹 앱)로 신호만 보내는 함수.
+// 실패해도 화면 표시에는 전혀 영향을 주지 않음.
+function logScan(d, zoneId, tabName) {
+  if (!TRACK_URL) return;
+  try {
+    const params = new URLSearchParams({
+      tab: tabName,
+      id: zoneId,
+      site: d.site || '',
+      client: d.client || '',
+      floor: d.floor || '',
+      zone: d.zone || '',
+      ua: navigator.userAgent || ''
+    });
+    new Image().src = TRACK_URL + '?' + params.toString();
+  } catch (e) {
+    // 카운트 실패는 무시
+  }
 }
 
 function showError(msg) {
